@@ -35,27 +35,44 @@ apt install -y postgresql-13 postgresql-client-13 postgresql-contrib-13 \
 #### RHEL:
 
 ```bash
-dnf module enable postgresql:13
+dnf module enable postgresql:13 # RHEL 8
+dnf module enable postgresql:16 # RHEL 9
 dnf install postgresql-server
 ```
 
 ## 2. PostgreSQL Configuration
 
-Edit PostgreSQL configuration files:
+Initialize the config (only required on RHEL, Debian does it during installation):
 
 ```bash
-# Configure PostgreSQL access
+postgresql-setup --initdb
+```
+
+Edit PostgreSQL configuration files:
+
+### Configure PostgreSQL access
+Edit `pg_hba.conf` to allow access of the DB on 127.0.0.1 with password:
+
+#### Debian:
+
+```bash
 nano /etc/postgresql/13/main/pg_hba.conf
 ```
 
-Add these lines:
+#### RHEL:
+
+```bash
+nano /var/lib/pgsql/data/pg_hba.conf
+```
+
+Add this line:
 
 ```
 # IPv4 local connections:
 host    all             all             127.0.0.1/32            password
 ```
 
-Configure main PostgreSQL settings:
+### Configure main PostgreSQL settings:
 
 #### Debian:
 
@@ -66,10 +83,10 @@ nano /etc/postgresql/13/main/postgresql.conf
 #### RHEL:
 
 ```bash
-nano /var/lib/pgsql/data/pg_hba.conf
+nano /var/lib/pgsql/data/postgresql.conf
 ```
 
-### Key settings to update:
+##### Key settings to update:
 
 ```conf
 # Basic settings
@@ -83,13 +100,21 @@ superuser_reserved_connections = 10
 
 # For Kamailio performance
 datestyle = 'iso, dmy'
-timezone = 'UTC'  # Or your timezone
+timezone = 'UTC'
 ```
 
 Restart PostgreSQL:
 
+#### Debian:
+
 ```bash
 systemctl restart postgresql@13-main
+```
+
+#### RHEL:
+
+```bash
+systemctl restart postgresql
 ```
 
 ## 3. Kamailio Installation
