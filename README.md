@@ -173,6 +173,7 @@ Create kamailio database and user:
 sudo -u postgres psql -c "CREATE DATABASE kamailio;"
 sudo -u postgres psql -c "CREATE USER kamailio WITH PASSWORD 'your_secure_password';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE kamailio TO kamailio;"
+sudo -u postgres psql -c "ALTER DATABASE kamailio OWNER TO kamailio;" # needed for PGSQL >15
 ```
 
 ## 5. Kazoo Configuration
